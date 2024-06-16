@@ -1,0 +1,70 @@
+local enabled = true
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+	if  input.KeyCode == Enum.KeyCode.RightControl then
+		if enabled == true then 
+			enabled = false
+			game.StarterGui:SetCore("SendNotification",{
+				Title = "OFF"; 
+				Text = "";
+				Duration = 5;
+			})
+
+		else
+			enabled = true
+		game.StarterGui:SetCore("SendNotification",{
+				Title = "ON"; 
+				Text = "";
+				Duration = 5;
+			})
+		end
+	end
+end)
+game.StarterGui:SetCore("SendNotification",{
+	Title = "Right-Control to turn off or on"; 
+	Text = "";
+	Duration = 5;
+})
+local url1 = game:HttpGet('https://www.bing.com/translator')
+
+IG = url1:match('IG:"([%w%d]+)"')
+local r2 = url1:match('params_AbusePreventionHelper%s*=%s*%[(.-)%]')
+ID, Key = r2:match('([^,%s]+)[,%s]+"([^"]+)"')
+local function fixandsend(message)
+	local url2 = "https://www.bing.com/tspellcheckv3?isVertical=1&IG="..IG.."&IID=translator.5023.2"
+	local Text = message
+	local request = request({ 
+		Url = url2,
+		Method = "POST",
+		Body = "&fromLang=en&text="..Text.."&token="..Key.."&key="..ID
+	})
+	local correctedText = game.HttpService:JSONDecode(request.Body).correctedText
+	
+	if game.TextChatService:FindFirstChild("TextChannels") then
+		if correctedText ~= "" then
+			game:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral"):SendAsync(correctedText)
+		else
+			game:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral"):SendAsync(Text)
+		end
+	else
+		if correctedText ~= "" then
+			game.ReplicatedStorage.DefaultChatSystemChatEvents:WaitForChild("SayMessageRequest"):FireServer(correctedText, "All")
+		else
+			game.ReplicatedStorage.DefaultChatSystemChatEvents:WaitForChild("SayMessageRequest"):FireServer(Text, "All")
+		end
+	end
+end
+
+local chatGui 
+if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Chat") then
+	chatGui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+else
+	chatGui = game.CoreGui.ExperienceChat.appLayout.chatInputBar.Background.Container.TextContainer.TextBoxContainer.TextBox
+end
+
+chatGui.FocusLost:Connect(function(en) -- This whole property is useful if you're looking to replace messages before sending a message.
+	if en and enabled == true then 
+		local message = chatGui.Text
+		chatGui.Text = ""
+		fixandsend(message)
+	end
+end)
