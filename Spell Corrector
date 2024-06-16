@@ -32,6 +32,7 @@ local url1 = game:HttpGet('https://www.bing.com/translator')
 IG = url1:match('IG:"([%w%d]+)"')
 local r2 = url1:match('params_AbusePreventionHelper%s*=%s*%[(.-)%]')
 ID, Key = r2:match('([^,%s]+)[,%s]+"([^"]+)"')
+
 local function fixandsend(message)
 	local url2 = "https://www.bing.com/tspellcheckv3?isVertical=1&IG="..IG.."&IID=translator.5023.2"
 	local Text = message
@@ -57,13 +58,12 @@ local function fixandsend(message)
 	end
 end
 
-local chatGui 
+local chatgui 
 if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Chat") then
 	chatGui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
 else
 	chatGui = game.CoreGui.ExperienceChat.appLayout.chatInputBar.Background.Container.TextContainer.TextBoxContainer.TextBox
 end
-
 chatGui.FocusLost:Connect(function(en) -- This whole property is useful if you're looking to replace messages before sending a message.
 	if en and enabled == true then 
 		local message = chatGui.Text
