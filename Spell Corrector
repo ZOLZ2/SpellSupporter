@@ -1,3 +1,10 @@
+game.StarterGui:SetCore("SendNotification",{
+	Title = "Right-Control to turn off or on"; 
+	Text = "";
+	Duration = 5;
+})
+
+
 local enabled = true
 game:GetService("UserInputService").InputBegan:Connect(function(input)
 	if  input.KeyCode == Enum.KeyCode.RightControl then
@@ -19,13 +26,9 @@ game:GetService("UserInputService").InputBegan:Connect(function(input)
 		end
 	end
 end)
-game.StarterGui:SetCore("SendNotification",{
-	Title = "Right-Control to turn off or on"; 
-	Text = "";
-	Duration = 5;
-})
-local url1 = game:HttpGet('https://www.bing.com/translator')
 
+
+local url1 = game:HttpGet('https://www.bing.com/translator')
 IG = url1:match('IG:"([%w%d]+)"')
 local r2 = url1:match('params_AbusePreventionHelper%s*=%s*%[(.-)%]')
 ID, Key = r2:match('([^,%s]+)[,%s]+"([^"]+)"')
@@ -47,9 +50,9 @@ local function fixandsend(message)
 		end
 	else
 		if correctedText ~= "" then
-			game.ReplicatedStorage.DefaultChatSystemChatEvents:WaitForChild("SayMessageRequest"):FireServer(correctedText, "All")
+			game.ReplicatedStorage.DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest"):FireServer(correctedText, "All")
 		else
-			game.ReplicatedStorage.DefaultChatSystemChatEvents:WaitForChild("SayMessageRequest"):FireServer(Text, "All")
+			game.ReplicatedStorage.DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest"):FireServer(Text, "All")
 		end
 	end
 end
